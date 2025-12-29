@@ -1,0 +1,71 @@
+{
+  "basic": {
+    "DEBUG": true,
+    "model_dir": "../../../resource/dynamic/saved_models"
+  },
+  "database": {
+    "MySQL": {
+      "host": "localhost",
+      "port": 3306,
+      "user": "root",
+      "database": "your_database",
+      "password": "your_password",
+      "table": {
+        "table_1": {
+          "table_name": "table_1",
+          "col_name": {
+              "logical_col_1": "physical_col_1",
+              "logical_col_2": "physical_col_2"
+          }
+        },
+        "table_2": {
+            "table_name": "table_2",
+            "col_name": {
+                "logical_col_1": "physical_col_1",
+                "logical_col_2": "physical_col_2"
+            }
+        }
+      },
+      "view": {
+        "view_1": {
+          "view_name": "view_1",
+          "col_name": {
+            "logical_col_1": "physical_col_1",
+            "logical_col_2": "physical_col_2"
+          }
+        }
+      }
+    },
+    "Redis": {
+      "redis_server_exe": "your_path/Redis/redis-server.exe",
+      "host": "localhost",
+      "port": 6379,
+      "db": 0,
+      "expire_seconds": 60
+    },
+    "Faiss": {
+      "local_index_path": {
+        "index_1": "../../resource/dynamic/index_1.faiss",
+        "index_2": "../../resource/dynamic/index_2.faiss"
+      }
+    },
+    "LocalData": {
+      "local_data_file_path": {
+        "file_1": "../../resource/static/data/file_1.csv",
+        "file_2": "../../resource/static/data/file_2.csv",
+        "linear_data": "../../resource/static/linear_data.csv"
+      }
+    }
+  },
+  "model": {
+    "LinearRegression": {
+      "train_ratio": 0.8,
+      "batch_size": 100,
+      "epoch": 200,
+      "incremental_epoch": 1,
+      "trials": 5,
+      "lr": 1e-2,
+      "weight_decay": 0.01
+    }
+  }
+}

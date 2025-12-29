@@ -1,0 +1,105 @@
+# =========================
+# Python Bytecode & Cache
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# =====================
+# Virtual Environments
+# =====================
+venv/
+env/
+.venv
+ENV/
+env.bak/
+venv.bak/
+
+# ==================
+# Dependency Folders
+# ==================
+lib/
+lib64/
+
+# ======================
+# Distribution Packages
+# ======================
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ===============
+# Testing Outputs
+# ===============
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+
+# ===================
+# IDE / Editor Files
+# ===================
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# =================
+# Jupyter Notebooks
+# =================
+.ipynb_checkpoints/
+
+# =============
+# Logs & Databases
+# =============
+*.log
+*.sqlite3
+logs/
+data/logs/
+
+# =====================
+# Local Config & Secrets
+# =====================
+.env
+.env.local
+.env.*
+config.local.*
+secrets.*
+credentials.*
+
+# =================
+# OS Generated Files
+# =================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# =================
+# Custom Data & Models (Optional)
+# =================
+# Uncomment if you don't want to commit large files
+# data/raw/
+# data/processed/
+# models/
+# resource/dynamic/
