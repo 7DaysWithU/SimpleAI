@@ -2,6 +2,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
+![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-7fb8b8?style=flat-square)
 ![Stars](https://img.shields.io/github/stars/7DaysWithU/SimpleAI?style=social)
 
 ## 📌0 目录
