@@ -101,11 +101,7 @@
    pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
    ```
 
-3. **安装MySQL和Redis**
-
-   MySQL用于实现基础的数据库存储功能，Redis用于实现高性能的内存缓存功能。安装方法易在互联网查阅。框架示例采用了MySQL+Redis+Faiss的数据库组合方案，实际使用时用户可自行安装任意数据库
-
-4. **运行**
+3. **运行**
 
    - **本地运行**：运行`SimpleAI/test/test.py`文件，文件内容即为使用示例  
    - **HTTP微服务运行**
