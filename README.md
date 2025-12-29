@@ -544,4 +544,4 @@ SimpleAI采用 **"基于约定，而非配置"** 的设计哲学。扩展框架�
 
 Simple·AI 正是这一研究脉络下的实践产物——旨在探索如何通过最小化抽象与显式接口契约，在保持灵活性的同时，降低工业级推荐系统的开发与运维复杂度
 
-欢迎通过 [GitHub Issues](https://github.com/SimpleAI/issues) 或 PR 交流想法
+欢迎通过 [GitHub Issues](https://github.com/7DaysWithU/SimpleAI/issues) 或 PR 交流想法
