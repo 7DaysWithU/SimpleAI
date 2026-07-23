@@ -17,14 +17,13 @@ class LinearRegression(nn.Module):
         super().__init__()
         self.output_layer = nn.Linear(in_features, 1, dtype = torch.float32)
 
-    def forward(self, X: torch.Tensor) -> float:
+    def forward(self, x_dict: dict[str, torch.Tensor]) -> float:
         """
         前向传播
 
-        :param X: 特征向量
+        :param x_dict: 特征字典
         :return: 预测向量
         """
 
-        a = self.output_layer(X)
-
+        a = self.output_layer(x_dict['x'])
         return a

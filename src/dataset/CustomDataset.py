@@ -1,27 +1,36 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 import numpy as np
+import pandas as pd
+import torch
 from torch.utils.data import Dataset
-import copy
 
 
-class CustomDataset(ABC, Dataset):
+class CustomDataset(Dataset):
     """
     自定义数据集类, 在 Dataset的基础上扩展更多操作
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, data: pd.DataFrame | np.ndarray, *args, **kwargs):
         """
         预设数据
 
+        :param data: 原始数据.
+                    支持pandas.DataFrame, 以便后续扩展操作
+                    支持numpy.ndarray, 用于__len__和train_test_split方法
         :param args: 位置参数
         :param kwargs: 关键字参数
-
-        注意
-        ------
-        - 采用列表更方便后期根据需求扩展成 ndarray或 tensor
         """
 
+        self.dataframe = pd.DataFrame(None)
         self.data = np.array(None)
+
+        if isinstance(data, pd.DataFrame):
+            self.dataframe = data
+            self.data = data.to_numpy()
+        elif isinstance(data, np.ndarray):
+            self.data = data
+        else:
+            raise TypeError("data must be DataFrame or ndarray")
 
     def __len__(self) -> int:
         """
@@ -38,7 +47,7 @@ class CustomDataset(ABC, Dataset):
         return len(self.data)
 
     @abstractmethod
-    def __getitem__(self, item: int) -> None:
+    def __getitem__(self, item: int) -> tuple[dict[str, torch.Tensor], torch.Tensor]:
         """
         获得数据集指定下标样本
 
@@ -52,24 +61,26 @@ class CustomDataset(ABC, Dataset):
 
         pass
 
-    @staticmethod
-    def train_test_split(dataset: 'CustomDataset', train_ratio: float) -> tuple['CustomDataset', 'CustomDataset']:
+    def train_valid_test_split(
+            self,
+            train_ratio: float,
+            valid_ratio: float
+    ) -> tuple['CustomDataset', 'CustomDataset', 'CustomDataset']:
         """
         将数据集分为训练和测试两部分
 
-        :param dataset: 继承了 CustomDataset的子类数据集
-        :param train_ratio: 训练样本比例
+        :param train_ratio: 训练集比例
+        :param valid_ratio: 验证集比例
         :return: 训练数据集, 测试数据集
         """
 
-        train_dataset = copy.deepcopy(dataset)
-        test_dataset = copy.deepcopy(dataset)
-
-        original_data = dataset.data.copy()
+        original_data = self.data.copy()
         np.random.shuffle(original_data)
 
-        split_index = int(train_ratio * len(original_data))
-        train_dataset.data = original_data[:split_index]
-        test_dataset.data = original_data[split_index:]
+        split_index_train = int(train_ratio * len(original_data))
+        split_index_valid = int(valid_ratio * len(original_data))
+        train_dataset = original_data[:split_index_train]
+        valid_dataset = original_data[split_index_train:split_index_train + split_index_valid]
+        test_dataset = original_data[split_index_train + split_index_valid:]
 
-        return train_dataset, test_dataset
+        return type(self)(train_dataset), type(self)(valid_dataset), type(self)(test_dataset)

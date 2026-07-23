@@ -23,16 +23,14 @@ class GeneralDispatch(Configurer):
         self.db_expire_time = 600
         # 数据库最后连接时间
         self.last_connected_timestamp = 0
+        # 训练设备
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-        self.model1_controller = LinearController()
-        # self.model2_controller = Model2()
-        # self.model3_controller = Model3()
+        self.model1_controller = LinearController(self.device)
 
         self.data_controller = DataController()
         self.model_controllers = [
-            self.model1_controller,
-            # self.model2_controller,
-            # self.model3_controller
+            self.model1_controller
         ]
 
     def __enter__(self) -> None:
@@ -129,4 +127,4 @@ class GeneralDispatch(Configurer):
         :return: X对应的值
         """
 
-        return self.model1_controller.use(torch.tensor([X]))
+        return self.model1_controller.use({'x': torch.tensor([X])})

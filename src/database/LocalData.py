@@ -17,8 +17,6 @@ class LocalData(Database):
         self.database_name = self.__class__.__name__
 
         self.local_data_file_path = {
-            "file_1": "../resource/static/file_1.csv",
-            "file_2": "../resource/static/file_2.csv",
             "linear_data": "../resource/static/linear_data.csv"
         }
 

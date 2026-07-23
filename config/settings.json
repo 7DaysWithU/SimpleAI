@@ -14,16 +14,16 @@
         "table_1": {
           "table_name": "table_1",
           "col_name": {
-              "logical_col_1": "physical_col_1",
-              "logical_col_2": "physical_col_2"
+            "logical_col_1": "physical_col_1",
+            "logical_col_2": "physical_col_2"
           }
         },
         "table_2": {
-            "table_name": "table_2",
-            "col_name": {
-                "logical_col_1": "physical_col_1",
-                "logical_col_2": "physical_col_2"
-            }
+          "table_name": "table_2",
+          "col_name": {
+            "logical_col_1": "physical_col_1",
+            "logical_col_2": "physical_col_2"
+          }
         }
       },
       "view": {
@@ -51,8 +51,6 @@
     },
     "LocalData": {
       "local_data_file_path": {
-        "file_1": "../../resource/static/data/file_1.csv",
-        "file_2": "../../resource/static/data/file_2.csv",
         "linear_data": "../../resource/static/linear_data.csv"
       }
     }
@@ -60,6 +58,7 @@
   "model": {
     "LinearRegression": {
       "train_ratio": 0.8,
+      "valid_ratio": 0.1,
       "batch_size": 100,
       "epoch": 200,
       "incremental_epoch": 1,

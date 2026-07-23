@@ -11,7 +11,7 @@ from torch.nn import MSELoss
 from control.model_controller import ModelController
 from dataset import LinearDataset
 from module import LinearRegression
-from utils import Loader, Trainer
+from utils import Loader, CTRTrainer
 from common import ModelSaveMode, Checkpoint
 
 
@@ -20,7 +20,7 @@ class LinearController(ModelController):
     线性回归模型控制类
     """
 
-    def __init__(self):
+    def __init__(self, device: torch.device):
         """
         初始化参数
         """
@@ -34,9 +34,11 @@ class LinearController(ModelController):
             ModelSaveMode.STATE: os.path.join(self.model_dir, f'{self.model_name}_{ModelSaveMode.STATE.value}.pth'),
             ModelSaveMode.FRAME: os.path.join(self.model_dir, f'{self.model_name}_{ModelSaveMode.FRAME.value}.pth')
         }
+        self.device = device
 
         # 模型参数
         self.train_ratio = 0.8
+        self.valid_ratio = 0.1
         self.batch_size = 100
         self.epoch = 200
         self.incremental_epoch = 1
@@ -47,6 +49,7 @@ class LinearController(ModelController):
         # 数据集
         self.dataset = None
         self.train_dataloader = None
+        self.valid_dataloader = None
         self.test_dataloader = None
 
         # 工具对象
@@ -84,7 +87,7 @@ class LinearController(ModelController):
         self.dataset = dataset
 
         loader = Loader(dataset)
-        self.train_dataloader, self.test_dataloader = loader.get_dataloader(self.train_ratio, self.batch_size)
+        self.train_dataloader, self.valid_dataloader, self.test_dataloader = loader.get_dataloader(self.train_ratio, self.valid_ratio, self.batch_size)
 
     def load_model_into_memory(self) -> None:
         """
@@ -93,7 +96,7 @@ class LinearController(ModelController):
         :return: 无
         """
 
-        model = torch.load(self.model_path[ModelSaveMode.FRAME])
+        model = torch.load(self.model_path[ModelSaveMode.FRAME], map_location = 'cpu').to('cpu')
         model.eval()
 
         self.pretrained_model = model
@@ -106,7 +109,7 @@ class LinearController(ModelController):
         :return: 无
         """
 
-        model = LinearRegression(1)
+        model = LinearRegression(in_features = 1).to(self.device)
         optimizer = Adam(model.parameters(), lr = self.lr, weight_decay = self.weight_decay)
         loss = MSELoss()
         if incremental:
@@ -120,13 +123,12 @@ class LinearController(ModelController):
             )
             # optimizer.load_state_dict(checkpoint[Checkpoint.OPTIMIZER])
 
-        trainer = Trainer(model, optimizer, loss)
+        trainer = CTRTrainer(model, optimizer, loss, self.device)
         trainer.train(
-            supervise = True,
             train_data = self.train_dataloader,
             epoch = self.incremental_epoch if incremental else self.epoch,
             trials = self.trials,
-            test_data = self.test_dataloader,
+            valid_data = self.valid_dataloader,
             plot = self.DEBUG,
             model_dir = self.model_dir
         )
@@ -134,13 +136,9 @@ class LinearController(ModelController):
 
     def eval(self) -> tuple[Callable, ...]:
         """
-        评估 NCF模型
+        评估模型
 
         :return: 准确率柱状图绘制函数
-
-        注意
-        ------
-        - 该评测方法会重新分割数据集, 可检测模型的泛化能力
         """
 
         def plot_regression_fit() -> None:
@@ -161,7 +159,7 @@ class LinearController(ModelController):
                     # X_batch: (batch_size, 1), y_batch: (batch_size,)
                     pred = self.pretrained_model(X_batch).squeeze(1)  # (batch_size,)
 
-                    all_x.append(X_batch.cpu().numpy())
+                    all_x.append(X_batch['x'].cpu().numpy())
                     all_y_true.append(y_batch.cpu().numpy())
                     all_y_pred.append(pred.cpu().numpy())
 
@@ -199,7 +197,7 @@ class LinearController(ModelController):
 
         return (plot_regression_fit,)
 
-    def use(self, X: torch.Tensor) -> torch.Tensor:
+    def use(self, X: dict[str, torch.Tensor]) -> torch.Tensor:
         """
         预测指定X对应的y
 
@@ -207,4 +205,5 @@ class LinearController(ModelController):
         :return: X对应的值
         """
 
-        return self.pretrained_model(X)
+        with torch.no_grad():
+            return self.pretrained_model(X)
